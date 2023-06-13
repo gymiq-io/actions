@@ -1,5 +1,7 @@
 name: "Build and publish conjure typescript bindings"
 inputs:
+  GITHUB_TOKEN:
+    required: true
   package-name:
     required: true
   defs:
@@ -53,5 +55,5 @@ runs:
       shell: bash
       working-directory: ./ts
       env:
-        NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_TOKEN: ${{ inputs.GITHUB_TOKEN }}
 
