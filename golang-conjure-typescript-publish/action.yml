@@ -1,1 +1,53 @@
+name: "Build and publish conjure typescript bindings"
+inputs:
+  package-name:
+    required: true
+  defs:
+    required: true
+
+runs:
+  using: "composite"
+  steps: 
+    - uses: actions/setup-node@v2
+      with:
+          node-version: 16
+          
+    - name: Conjure compile
+      run: |
+        mkdir conjure-lib
+        mkdir conjure-ts
+        mkdir ir
+
+        curl -sS https://repo1.maven.org/maven2/com/palantir/conjure/conjure/4.38.0/conjure-4.38.0.tgz > file.tgz 
+        tar -xvzf file.tgz -C conjure-lib
+
+        curl -sS https://repo1.maven.org/maven2/com/palantir/conjure/typescript/conjure-typescript/5.5.0/conjure-typescript-5.5.0.tgz > file.tgz 
+        tar -xvzf file.tgz -C conjure-ts
+
+        rm -rf file.tgz
+        
+        ./conjure-lib/conjure-4.38.0/bin/conjure compile ${{ inputs.defs }} ir
+        mkdir -p ts
+        ./conjure-ts/conjure-typescript-5.5.0/bin/conjure-typescript generate --rawSource ir ts
+        
+        cat > ts/package.json << EOL
+        {
+            "name": "@gymiq-io/${{ inputs.package-name }}",
+            "version": "0.0.0",
+            "publishConfig": {
+                "registry": "https://npm.pkg.github.com"
+            }
+        }
+        
+    - run: |
+        echo @gymiq-io:https://npm.pkg.github.com/ > ts/.npmrc
+        echo '//npm.pkg.github.com/:_authToken=${NPM_TOKEN}' >> ts/.npmrc
+      
+    - run: npm version ${{github.ref_name}}
+      working-directory: ./ts
+
+    - run: npm publish
+      working-directory: ./ts
+      env:
+        NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
