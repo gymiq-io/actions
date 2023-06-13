@@ -6,9 +6,6 @@ inputs:
     required: true
 
 runs:
-  permissions:
-    contents: read
-    packages: write
   using: "composite"
   steps: 
     - uses: actions/setup-node@v2
@@ -16,6 +13,7 @@ runs:
           node-version: 16
           
     - name: Conjure compile
+      shell: bash
       run: |
         mkdir conjure-lib
         mkdir conjure-ts
@@ -42,7 +40,8 @@ runs:
             }
         }
         
-    - run: |
+    - shell: bash
+      run: |
         echo @gymiq-io:https://npm.pkg.github.com/ > ts/.npmrc
         echo '//npm.pkg.github.com/:_authToken=${NPM_TOKEN}' >> ts/.npmrc
       
