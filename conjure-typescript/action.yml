@@ -46,9 +46,11 @@ runs:
         echo '//npm.pkg.github.com/:_authToken=${NPM_TOKEN}' >> ts/.npmrc
       
     - run: npm version ${{github.ref_name}}
+      shell: bash
       working-directory: ./ts
 
     - run: npm publish
+      shell: bash
       working-directory: ./ts
       env:
         NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
