@@ -6,6 +6,9 @@ inputs:
     required: true
 
 runs:
+  permissions:
+    contents: read
+    packages: write
   using: "composite"
   steps: 
     - uses: actions/setup-node@v2
