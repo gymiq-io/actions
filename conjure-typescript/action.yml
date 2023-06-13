@@ -19,7 +19,6 @@ runs:
       run: |
         mkdir conjure-lib
         mkdir conjure-ts
-        mkdir ir
 
         curl -sS https://repo1.maven.org/maven2/com/palantir/conjure/conjure/4.38.0/conjure-4.38.0.tgz > file.tgz 
         tar -xvzf file.tgz -C conjure-lib
